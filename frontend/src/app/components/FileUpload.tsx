@@ -4,10 +4,14 @@ import React, { useState } from "react";
 
 export default function FileUpload() {
   const [file, setFile] = useState<File | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [success, setSuccess] = useState<{
+    fileName: string;
+    rows: number;
+    columns: string[];
+  } | null>(null);
   const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
   const validateFile = (selected: File | null) => {
@@ -85,7 +89,11 @@ export default function FileUpload() {
       if (!res.ok) throw new Error("アップロードに失敗しました");
 
       const data = await res.json();
-      setSuccess(`アップロード完了: ${file.name} 行数=${data.data.rows}`);
+      setSuccess({
+        fileName: file.name,
+        rows: data.data.rows,
+        columns: data.data.columns, // カラム名の配列
+      });
       setFile(null);
     } catch {
       setError("アップロードに失敗しました");
@@ -128,9 +136,19 @@ export default function FileUpload() {
           </div>
         </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {success && <p className="text-green-600 text-sm">{success}</p>}
-
+        {error && <p className="bg-red-100 border border-red-400 text-red-500 text-sm p-4 rounded text-center">{error}</p>}
+        {success && (
+          <div className="bg-green-100 border border-green-400 text-green-600 text-sm p-4 rounded text-center">
+            <p>アップロード完了: {success.fileName}</p>
+            <p>行数: {success.rows}</p>
+            <p>カラム名</p>
+            <ul className="list-disc list-inside">
+              {success.columns.map((col, i) => (
+                <li key={i}>{col}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <button
           type="submit"
           disabled={!file || isUploading}
