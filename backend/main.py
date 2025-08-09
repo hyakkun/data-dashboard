@@ -2,10 +2,16 @@ from fastapi import FastAPI, UploadFile, HTTPException
 import pandas as pd
 
 from pandas.errors import ParserError
+from fastapi.exceptions import RequestValidationError
+
+from exceptions import http_exception_handler, validation_exception_handler
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 
 app = FastAPI()
+
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
 @app.get("/health")
 def health():
@@ -33,7 +39,14 @@ async def upload_file(file: UploadFile):
         if df.empty or df.columns.size == 0:
             raise HTTPException(status_code=400, detail="Missing header or no data in CSV.")
         # Process the DataFrame as needed
-        return {"message": "File processed successfully", "rows": len(df), "columns": list(df.columns)}
+        return {
+            "status": "success",
+            "message": "File processed successfully",
+            "data" : {
+                "rows": len(df),
+                "columns": list(df.columns),
+                },
+        }
     except ParserError:
         raise HTTPException(status_code=400, detail="File parsing error. Please check the CSV format.")
     except HTTPException as e:
