@@ -8,22 +8,48 @@ export default function FileUpload() {
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+  const validateFile = (selected: File | null) => {
+    if (!selected) {
+      return { valid: false, message: "ファイルが選択されていません。" };
+    }
+    const ext = selected.name.split('.').pop()?.toLowerCase();
+    if (ext !== 'csv') {
+      return { valid: false, message: "CSVファイルのみ選択可能です。" };
+    }
+    if (selected.size > MAX_FILE_SIZE) {
+      return { valid: false, message: "ファイルサイズは5MB以下にしてください。" };
+    }
+    return { valid: true, message: "" };
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.files?.[0] || null);
+    const selected = e.target.files?.[0] || null;
+    const { valid, message } = validateFile(selected);
+    if (!valid) {
+      setError(message);
+      setFile(null);
+    } else {
+      setError(null);
+      setFile(selected);
+    }
     setSuccess(null);
-    setError(null);
-  };
+  }
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragOver(false);
     const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile) {
-      setFile(droppedFile);
+    const { valid, message } = validateFile(droppedFile);
+    if (!valid) {
+      setError(message);
+      setFile(null);
+    } else {
       setError(null);
-      setSuccess(null);
+      setFile(droppedFile);
     }
+    setSuccess(null);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
