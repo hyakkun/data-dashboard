@@ -51,7 +51,7 @@ def test_large_file():
     large_csv.seek(0)
 
     # バイトストリームに変換
-    large_csv_bytes = io.BytesIO(large_csv_str.getvalue().encode('utf-8'))
+    large_csv_bytes = io.BytesIO(large_csv.getvalue().encode('utf-8'))
 
     response = client.post("/upload", files={"file": ("large.csv", large_csv_bytes, "text/csv")})
     assert response.status_code in (400, 413)  # 実装に応じて
