@@ -29,8 +29,8 @@ def test_empty_file():
         response = client.post("/upload", files={"file": (file_path.name, f, "text/csv")})
     assert response.status_code == 400
 
-def test_missing_header():
-    file_path = DATA_DIR / "missing_header.csv"
+def test_header_only_csv():
+    file_path = DATA_DIR / "header_only.csv"
     with file_path.open("rb") as f:
         response = client.post("/upload", files={"file": (file_path.name, f, "text/csv")})
     assert response.status_code == 400
@@ -46,7 +46,7 @@ def test_large_file():
     large_csv = io.StringIO()
     writer = csv.writer(large_csv)
     writer.writerow(["name", "age", "email"])
-    for _ in range(100_000):
+    for _ in range(1_000_000):
         writer.writerow(["John", "99", "john@example.com"])
     large_csv.seek(0)
 
@@ -54,4 +54,4 @@ def test_large_file():
     large_csv_bytes = io.BytesIO(large_csv.getvalue().encode('utf-8'))
 
     response = client.post("/upload", files={"file": ("large.csv", large_csv_bytes, "text/csv")})
-    assert response.status_code in (400, 413)  # 実装に応じて
+    assert response.status_code == 413
