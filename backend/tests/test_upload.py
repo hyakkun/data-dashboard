@@ -15,7 +15,7 @@ def test_valid_csv():
     with file_path.open("rb") as f:
         response = client.post("/upload", files={"file": (file_path.name, f, "text/csv")})
     assert response.status_code == 200
-    assert "rows" in response.json()
+    assert "data" in response.json()
 
 def test_wrong_extension():
     file_path = DATA_DIR / "wrong_extension.txt"
