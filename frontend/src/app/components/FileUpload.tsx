@@ -40,6 +40,7 @@ export default function FileUpload() {
       setFile(selected);
     }
     setSuccess(null);
+    e.target.value = "";
   }
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
