@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function FileUpload() {
   const [file, setFile] = useState<File | null>(null);
@@ -136,19 +137,6 @@ export default function FileUpload() {
           </div>
         </div>
 
-        {error && <p className="bg-red-100 border border-red-400 text-red-500 text-sm p-4 rounded text-center">{error}</p>}
-        {success && (
-          <div className="bg-green-100 border border-green-400 text-green-600 text-sm p-4 rounded text-center">
-            <p>アップロード完了: {success.fileName}</p>
-            <p>行数: {success.rows}</p>
-            <p>カラム名</p>
-            <ul className="list-disc list-inside">
-              {success.columns.map((col, i) => (
-                <li key={i}>{col}</li>
-              ))}
-            </ul>
-          </div>
-        )}
         <button
           type="submit"
           disabled={!file || isUploading}
@@ -161,6 +149,28 @@ export default function FileUpload() {
           {isUploading ? "アップロード中..." : "アップロード"}
         </button>
       </form>
+      <div className="mt-4">
+        {isUploading ? (
+          <LoadingSpinner message="アップロード中..." />
+        ) : (
+          <>
+            {error && <p className="bg-red-100 border border-red-400 text-red-500 text-sm p-4 rounded text-center">{error}</p>}
+            {success && (
+              <div className="bg-green-100 border border-green-400 text-green-600 text-sm p-4 rounded text-center">
+                <p>アップロード完了: {success.fileName}</p>
+                <p>行数: {success.rows}</p>
+                <p>カラム名</p>
+                <ul className="list-disc list-inside">
+                  {success.columns.map((col, i) => (
+                    <li key={i}>{col}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
     </div>
   );
 }
