@@ -9,7 +9,7 @@ on:
     branches: [ main ]
 
 defaults:
-  runs:
+  run:
     working-directory: backend
 
 jobs:
