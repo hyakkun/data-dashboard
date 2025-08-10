@@ -8,6 +8,10 @@ on:
   pull_request:
     branches: [ main ]
 
+defaults:
+  runs:
+    working-directory: backend
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -23,18 +27,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest httpx
 
       - name: Run tests
         run: |
-          cd backend
           pytest -v --junitxml=report.xml
       
       - name: Publish test reports
         uses: mikepenz/action-junit-report@v5
         if: always()
         with:
-          report_paths: backend/report.xml
+          report_paths: report.xml
