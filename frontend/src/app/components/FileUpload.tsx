@@ -144,6 +144,7 @@ export default function FileUpload() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div
+          data-testid="drop-zone"
           onDragOver={handleDragOver} onDrop={handleDrop} onDragLeave={handleDragLeave}
           className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition 
           ${isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50"}`}
