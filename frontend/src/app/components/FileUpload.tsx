@@ -79,6 +79,11 @@ export default function FileUpload() {
     setSuccess(null);
     setError(null);
 
+    // 開発環境ではアップロードの遅延をシミュレート
+    if (process.env.NODE_ENV === "development") {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -105,7 +110,8 @@ export default function FileUpload() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg">
+    <div className="relative max-w-md mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg">
+      {isUploading && <LoadingSpinner />}
       <h2 className="text-xl font-semibold mb-4 text-gray-800">
         ファイルアップロード
       </h2>
@@ -150,28 +156,19 @@ export default function FileUpload() {
           {isUploading ? "アップロード中..." : "アップロード"}
         </button>
       </form>
-      <div className="mt-4">
-        {isUploading ? (
-          <LoadingSpinner message="アップロード中..." />
-        ) : (
-          <>
-            {error && <p className="bg-red-100 border border-red-400 text-red-500 text-sm p-4 rounded text-center">{error}</p>}
-            {success && (
-              <div className="bg-green-100 border border-green-400 text-green-600 text-sm p-4 rounded text-center">
-                <p>アップロード完了: {success.fileName}</p>
-                <p>行数: {success.rows}</p>
-                <p>カラム名</p>
-                <ul className="list-disc list-inside">
-                  {success.columns.map((col, i) => (
-                    <li key={i}>{col}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-
+      {error && <p className="bg-red-100 border border-red-400 text-red-500 text-sm p-4 rounded text-center">{error}</p>}
+      {success && (
+        <div className="bg-green-100 border border-green-400 text-green-600 text-sm p-4 rounded text-center">
+          <p>アップロード完了: {success.fileName}</p>
+          <p>行数: {success.rows}</p>
+          <p>カラム名</p>
+          <ul className="list-disc list-inside">
+            {success.columns.map((col, i) => (
+              <li key={i}>{col}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
