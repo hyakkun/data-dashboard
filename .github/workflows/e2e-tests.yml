@@ -13,6 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+    - name: Install dependencies
+      run: |
+        rm -rf node_modules
+        npm cache clean --force
+        npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
     - name: Build and start services
       run: |
         cd ..
@@ -28,16 +38,6 @@ jobs:
           echo "Waiting for services to be ready..."
           sleep 5
         done
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
-    - name: Install dependencies
-      run: |
-        rm -rf node_modules
-        npm cache clean --force
-        npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@v4
