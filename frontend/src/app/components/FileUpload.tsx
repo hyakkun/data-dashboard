@@ -180,13 +180,13 @@ export default function FileUpload() {
         </button>
       </form>
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-500 text-sm p-4 rounded text-center">
+        <div className="mt-4 bg-red-100 border border-red-400 text-red-500 text-sm p-4 rounded text-center">
           <p>アップロードに失敗しました</p>
           <p>{error}</p>
         </div>
       )}
       {success && (
-        <div className="bg-green-100 border border-green-400 text-green-600 text-sm p-4 rounded text-center">
+        <div className="mt-4 bg-green-100 border border-green-400 text-green-600 text-sm p-4 rounded text-center">
           <p>アップロード完了: {success.fileName}</p>
           <p>行数: {success.rows}</p>
           <p>カラム名</p>
