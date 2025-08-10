@@ -92,18 +92,41 @@ export default function FileUpload() {
         method: "POST",
         body: formData,
       });
-
-      if (!res.ok) throw new Error("アップロードに失敗しました");
-
       const data = await res.json();
+
+      if (!res.ok) {
+        let errorMsg = "";
+        if (data?.error) {
+          if (typeof data.error === "string") {
+            errorMsg = data.error;
+          } else if (typeof data.error === "object") {
+            if (data.error.message) {
+              errorMsg = data.error.message;
+            }
+            if (Array.isArray(data.error.details)) {
+              errorMsg += "：" + data.error.details.map((d: { msg: string }) => d.msg).join(" / ");
+            }
+            if (data.error.detail) {
+              if (typeof data.error.detail === "string") {
+                errorMsg = data.error.detail;
+              } else if (Array.isArray(data.error.detail)) {
+                errorMsg += ":" + data.error.detail.map((d: { msg: string }) => d.msg).join(" / ");
+              }
+            }
+          }
+        }
+        throw new Error(errorMsg);
+      }
+
       setSuccess({
         fileName: file.name,
         rows: data.data.rows,
         columns: data.data.columns, // カラム名の配列
       });
       setFile(null);
-    } catch {
-      setError("アップロードに失敗しました");
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'サーバーエラー';
+      setError(message);
     } finally {
       setIsUploading(false);
     }
@@ -156,7 +179,12 @@ export default function FileUpload() {
           {isUploading ? "アップロード中..." : "アップロード"}
         </button>
       </form>
-      {error && <p className="bg-red-100 border border-red-400 text-red-500 text-sm p-4 rounded text-center">{error}</p>}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-500 text-sm p-4 rounded text-center">
+          <p>アップロードに失敗しました</p>
+          <p>{error}</p>
+        </div>
+      )}
       {success && (
         <div className="bg-green-100 border border-green-400 text-green-600 text-sm p-4 rounded text-center">
           <p>アップロード完了: {success.fileName}</p>
