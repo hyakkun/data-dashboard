@@ -3,3 +3,4 @@
 __pycache__
 .envrc
 .pytest_cache
+uploads
