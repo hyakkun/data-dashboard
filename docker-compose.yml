@@ -14,8 +14,30 @@ services:
     build:
       context: ./backend
     container_name: backend
+    env_file:
+      - .env
     expose:
       - "8000"
+    volumes:
+      - local_storage:/app/uploads
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    container_name: db
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+    driver: local
+  local_storage:
+    driver: local
 
 networks:
     default:

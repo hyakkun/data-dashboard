@@ -2,6 +2,8 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+ENV DATABASE_URL=sqlite:///./test.db
+
 COPY requirements.txt .
 
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential ca-certificates \
