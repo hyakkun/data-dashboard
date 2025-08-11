@@ -7,14 +7,14 @@ from fastapi.exceptions import RequestValidationError
 from sqlalchemy.orm import Session
 
 from exceptions import http_exception_handler, validation_exception_handler
-from storage_services import LocalStorage
+from storage_services import LocalStorageService
 from database import SessionLocal
 from models import UploadedCSV
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 
 app = FastAPI()
-storage = LocalStorage()
+storage = LocalStorageService()
 
 app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
