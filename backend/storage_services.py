@@ -2,7 +2,7 @@ from pathlib import Path
 import shutil
 from typing import BinaryIO
 
-from fastapi import FileResponse
+from fastapi.responses import FileResponse
 
 class LocalStorageService:
     def __init__(self, base_path: str = "uploads"):
