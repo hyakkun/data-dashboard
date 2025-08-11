@@ -10,6 +10,7 @@ class LocalStorageService:
         self.base_path.mkdir(parents=True, exist_ok=True)
 
     def save_file(self, file_id: str, file_obj: BinaryIO):
+        file_obj.seek(0)  # Ensure the file pointer is at the start
         target_path = self.base_path / file_id
         with open(target_path, "wb") as f:
             shutil.copyfileobj(file_obj, f)
