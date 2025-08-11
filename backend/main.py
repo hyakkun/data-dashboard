@@ -30,7 +30,7 @@ def get_db():
 def health():
     return {"status": "ok"}
 
-@app.post("/upload")
+@app.post("/files")
 async def upload_file(file: UploadFile, db: Session = Depends(get_db)):
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="Invalid file type. Only CSV files are allowed.")

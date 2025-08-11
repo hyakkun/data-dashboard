@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const blob = new Blob([fileBuffer], { type: file.mimetype ?? "application/octet-stream" });
     formData.append('file', blob, file.originalFilename ?? 'uploaded_file');
 
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL + "/upload";
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL + "/files";
     let backendRes;
     try {
       backendRes = await fetch(backendUrl, {
