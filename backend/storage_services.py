@@ -2,6 +2,8 @@ from pathlib import Path
 import shutil
 from typing import BinaryIO
 
+from fastapi import FileResponse
+
 class LocalStorageService:
     def __init__(self, base_path: str = "uploads"):
         self.base_path = Path(base_path)
@@ -18,6 +20,12 @@ class LocalStorageService:
 
     def get_file_path(self, file_id: str) -> Path:
         return self.base_path / file_id
+    
+    def get_file_response(self, file_id: str, filename: str):
+        file_path = self.get_file_path(file_id)
+        if not file_path.exists():
+            raise FileNotFoundError(f"File {file_id} not found.")
+        return FileResponse(path=file_path, media_type="text/csv", filename=filename)
 
     def delete_file(self, file_id: str):
         path = self.get_file_path(file_id)

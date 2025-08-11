@@ -99,6 +99,17 @@ def get_file(file_id: uuid.UUID, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="ファイルが見つかりません")
     return file_record
 
+@app.get("/files/{file_id}/download")
+def download_file(file_id: uuid.UUID, db: Session = Depends(get_db)):
+    file_record = db.query(UploadedCSV).filter(UploadedCSV.id == file_id).first()
+    if not file_record:
+        raise HTTPException(status_code=404, detail="ファイルが見つかりません")
+
+    try:
+        return storage.get_file_response(str(file_record.id), file_record.filename)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="ファイルが見つかりません")
+
 @app.delete("/files/{file_id}")
 def delete_file(file_id: uuid.UUID, db: Session = Depends(get_db)):
     file_record = db.query(UploadedCSV).filter(UploadedCSV.id == file_id).first()
