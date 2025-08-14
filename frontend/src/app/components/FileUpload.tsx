@@ -92,7 +92,7 @@ export default function FileUpload({ onClose }: FileUploadProps) {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("/api/upload", {
+      const res = await fetch("/api/files", {
         method: "POST",
         body: formData,
       });

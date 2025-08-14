@@ -11,7 +11,7 @@ export const FileListContainer = () => {
   const loadFiles = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/listfiles", {
+      const res = await fetch("/api/files", {
         method: "GET",
       });
       const data = await res.json();
