@@ -61,8 +61,10 @@ export const FileListContainer = () => {
           }
           throw new Error(errorMsg);
         }
+        alert(`${file.filename} を削除しました`);
         loadFiles();
       } catch (e) {
+        alert(`${file.filename} の削除に失敗しました`);
         console.error("ファイルの削除に失敗しました", e);
       }
     }
