@@ -27,8 +27,7 @@ export const FileListContainer = () => {
 
   // ダウンロードボタンが押されたら呼ばれる
   const handleDownload = (file: FileItem) => {
-    alert(`Downloading file: ${file.filename}`);
-    // ここで実際はAPIにGETリクエスト飛ばす等の処理を書く
+    window.open(`/api/files/${file.file_id}/download`, "_blank");
   };
 
   // 削除ボタンが押されたら呼ばれる
