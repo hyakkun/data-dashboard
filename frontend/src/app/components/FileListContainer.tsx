@@ -30,13 +30,42 @@ export const FileListContainer = () => {
   };
 
   // 削除ボタンが押されたら呼ばれる
-  const handleDelete = (file: FileItem) => {
-    if (confirm("削除してもよろしいですか？")) {
-      alert(`Deleting file: ${file.filename}`);
-      // await deleteFile(id);
-      loadFiles()
+  const handleDelete = async (file: FileItem) => {
+    if (confirm(`${file.filename} を削除してもよろしいですか？`)) {
+      try {
+        const res = await fetch(`/api/files/${file.file_id}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          let errorMsg = "";
+          if (data?.error) {
+            if (typeof data.error === "string") {
+              errorMsg = data.error;
+            } else if (typeof data.error === "object") {
+              if (data.error.message) {
+                errorMsg = data.error.message;
+              }
+              if (Array.isArray(data.error.details)) {
+                errorMsg += "：" + data.error.details.map((d: { msg: string }) => d.msg).join(" / ");
+              }
+              if (data.error.detail) {
+                if (typeof data.error.detail === "string") {
+                  errorMsg = data.error.detail;
+                } else if (Array.isArray(data.error.detail)) {
+                  errorMsg += ":" + data.error.detail.map((d: { msg: string }) => d.msg).join(" / ");
+                }
+              }
+            }
+          }
+          throw new Error(errorMsg);
+        }
+        loadFiles();
+      } catch (e) {
+        console.error("ファイルの削除に失敗しました", e);
+      }
     }
-    // API呼び出しして削除、削除成功後に一覧更新など
   };
 
   // ファイル名クリックで詳細画面に遷移する処理
