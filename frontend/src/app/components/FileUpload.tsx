@@ -139,7 +139,7 @@ export default function FileUploadModal({ onClose, onUploadSuccess }: FileUpload
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
       <div className="relative max-w-md mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg">
         {isUploading && <LoadingSpinner />}
         <h2 className="text-xl font-semibold mb-4 text-gray-800">
