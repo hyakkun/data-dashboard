@@ -74,8 +74,7 @@ export const FileListContainer = () => {
 
   // ファイル名クリックで詳細画面に遷移する処理
   const handleNavigateDetail = (file: FileItem) => {
-    alert(`Navigate to detail screen of: ${file.filename}`);
-    // ここで react-router の useNavigate などを使って遷移させる想定
+    window.location.href = `/files/${file.file_id}`;
   };
 
   useEffect(() => {
