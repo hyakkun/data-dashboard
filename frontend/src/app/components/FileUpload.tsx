@@ -5,9 +5,10 @@ import LoadingSpinner from "./LoadingSpinner";
 
 interface FileUploadProps {
   onClose: () => void;
+  onUploadSuccess: () => void; // アップロード成功時のコールバック
 }
 
-export default function FileUpload({ onClose }: FileUploadProps) {
+export default function FileUploadModal({ onClose, onUploadSuccess }: FileUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -127,6 +128,7 @@ export default function FileUpload({ onClose }: FileUploadProps) {
         rows: data.data.rows,
         columns: data.data.columns, // カラム名の配列
       });
+      onUploadSuccess();
       setFile(null);
     } catch (e) {
       const message = e instanceof Error ? e.message : 'サーバーエラー';

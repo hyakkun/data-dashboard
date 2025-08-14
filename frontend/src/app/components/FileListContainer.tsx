@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { FileList, FileItem } from "./FileList";
+import FileUploadModal from "./FileUpload";
 import LoadingSpinner from "./LoadingSpinner";
 
 export const FileListContainer = () => {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadFiles = async () => {
     setIsLoading(true);
@@ -82,6 +84,15 @@ export const FileListContainer = () => {
 
   return (
     <div>
+      <div className="flex justify-between items-center mb-4">
+       <h1 className="text-xl font-bold">アップロード済みファイル一覧</h1>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          アップロード
+        </button>
+      </div>
       {isLoading && <LoadingSpinner />}
       {files.length === 0 && !isLoading && (
         <div className="text-center text-gray-500 mt-8">
@@ -96,6 +107,13 @@ export const FileListContainer = () => {
           onNavigateDetail={handleNavigateDetail}
         />
       )}
+      {isModalOpen && (
+        <FileUploadModal
+          onClose={() => setIsModalOpen(false)}
+          onUploadSuccess={loadFiles}
+        />
+      )}
+
     </div>
   );
 };
