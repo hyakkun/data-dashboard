@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
 export interface FileItem {
-  id: string;
-  name: string;
+  file_id: string;
+  filename: string;
   rows: number;
-  uploadedAt: string; // ISO文字列想定
-  size: number; // バイト
+  uploaded_at: string; // ISO文字列想定
+  filesize: number; // バイト
 }
 
 interface FileListProps {
@@ -23,8 +23,8 @@ export const FileList: React.FC<FileListProps> = ({
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
+  const toggleExpand = (file_id: string) => {
+    setExpandedId(expandedId === file_id ? null : file_id);
   };
 
   const formatDate = (iso: string) => new Date(iso).toLocaleString();
@@ -37,21 +37,20 @@ export const FileList: React.FC<FileListProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto mt-8">
-      <h2 className="text-2xl font-semibold mb-4">アップロード済みファイル一覧</h2>
       <ul className="divide-y divide-gray-300">
         {files.map((file) => (
-          <li key={file.id}>
+          <li key={file.file_id}>
             {/* メイン行 */}
             <div
               className="flex items-center justify-between cursor-pointer p-4 hover:bg-gray-100"
-              onClick={() => toggleExpand(file.id)}
+              onClick={() => toggleExpand(file.file_id)}
             >
               <div className="flex items-center space-x-4">
                 <span
                   className={`inline-block transform transition-transform ${
-                    expandedId === file.id ? "rotate-90" : ""
+                    expandedId === file.file_id ? "rotate-90" : ""
                   }`}
-                  aria-label={expandedId === file.id ? "閉じる" : "開く"}
+                  aria-label={expandedId === file.file_id ? "閉じる" : "開く"}
                 >
                   ▶
                 </span>
@@ -62,20 +61,20 @@ export const FileList: React.FC<FileListProps> = ({
                   }}
                   className="text-blue-600 hover:underline text-left"
                 >
-                  {file.name}
+                  {file.filename}
                 </button>
               </div>
 
               <div className="text-gray-600 text-sm">
-                {file.rows} 行 / {formatDate(file.uploadedAt)}
+                {file.rows} 行 / {formatDate(file.uploaded_at)}
               </div>
             </div>
 
             {/* 展開部分 */}
-            {expandedId === file.id && (
+            {expandedId === file.file_id && (
               <div className="bg-gray-50 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
                 <div className="text-gray-700">
-                  サイズ: {formatSize(file.size)}
+                  サイズ: {formatSize(file.filesize)}
                 </div>
                 <div className="flex space-x-4">
                   <button
