@@ -3,7 +3,7 @@ import React, { useState } from "react";
 export interface FileItem {
   file_id: string;
   filename: string;
-  rows: number;
+  row_count: number;
   uploaded_at: string; // ISO文字列想定
   filesize: number; // バイト
 }
@@ -66,7 +66,7 @@ export const FileList: React.FC<FileListProps> = ({
               </div>
 
               <div className="text-gray-600 text-sm">
-                {file.rows} 行 / {formatDate(file.uploaded_at)}
+                {file.row_count} 行 / {formatDate(file.uploaded_at)}
               </div>
             </div>
 
