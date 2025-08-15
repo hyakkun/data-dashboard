@@ -187,6 +187,7 @@ export default function FileUploadModal({ onClose, onUploadSuccess }: FileUpload
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
               }`}
+            data-testid="upload-button"
           >
             {isUploading ? "アップロード中..." : "アップロード"}
           </button>

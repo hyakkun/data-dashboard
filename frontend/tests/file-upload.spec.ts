@@ -15,7 +15,7 @@ test.describe('File Upload Component', () => {
     const fileInput = page.locator('input[type="file"]');
     await fileInput.setInputFiles(filePath);
 
-    await page.getByRole('button', { name: 'アップロード' }).click();
+    await page.locator('[data-testid="upload-button"]').click();
 
     await expect(page.locator('text=アップロード完了')).toBeVisible();
   });
@@ -37,7 +37,7 @@ test.describe('File Upload Component', () => {
       element.dispatchEvent(event);
     }, { name: 'test-data.csv', buffer: Array.from(buffer) });
 
-    await page.getByRole('button', { name: 'アップロード' }).click();
+    await page.locator('[data-testid="upload-button"]').click();
 
     await expect(page.locator('text=アップロード完了')).toBeVisible();
   });
