@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { FiX } from "react-icons/fi";
 import LoadingSpinner from "./LoadingSpinner";
 
 interface FileUploadProps {
@@ -140,21 +141,15 @@ export default function FileUploadModal({ onClose, onUploadSuccess }: FileUpload
 
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
-      <div className="relative max-w-md mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg">
+      <div className="relative max-w-md max-h-[calc(100vh-4rem)] p-6 bg-white shadow-lg rounded-lg overflow-y-auto">
         {isUploading && <LoadingSpinner />}
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">
-          ファイルアップロード
-        </h2>
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 rounded"
-            disabled={isUploading}
-          >
-            キャンセル
+        <div className="flex justify-between items-center border-b pb-2">
+          <h2 className="text-lg font-semibold">ファイルアップロード</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <FiX size={20} />
           </button>
         </div>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-gray-500 my-4">
           CSVファイルを選択してアップロードしてください。
         </p>
 
@@ -163,7 +158,7 @@ export default function FileUploadModal({ onClose, onUploadSuccess }: FileUpload
             data-testid="drop-zone"
             onDragOver={handleDragOver} onDrop={handleDrop} onDragLeave={handleDragLeave}
             className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition 
-          ${isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50"}`}
+              ${isDragOver ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50"}`}
           >
             <p className="text-sm text-gray-600">
               ファイルをここにドラッグ&ドロップ
@@ -214,6 +209,14 @@ export default function FileUploadModal({ onClose, onUploadSuccess }: FileUpload
             </ul>
           </div>
         )}
+        <div className="flex justify-end gap-2 px-2 pt-4 border-t mt-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+          >
+            閉じる
+          </button>
+        </div>
       </div>
     </div>
   );

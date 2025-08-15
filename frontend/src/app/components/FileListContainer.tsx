@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { FiUpload } from "react-icons/fi";
 import { FileList, FileItem } from "./FileList";
 import FileUploadModal from "./FileUpload";
 import LoadingSpinner from "./LoadingSpinner";
@@ -82,13 +83,14 @@ export const FileListContainer = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-       <h1 className="text-xl font-bold">アップロード済みファイル一覧</h1>
+      <div className="flex items-center justify-between px-4 py-2 border-b bg-white">
+        <h1 className="text-xl font-bold text-gray-800">ファイル一覧</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="p-2 rounded-full text-blue-500 hover:bg-gray-100"
+          title="アップロード"
         >
-          アップロード
+          <FiUpload size={20} />
         </button>
       </div>
       {isLoading && <LoadingSpinner />}
