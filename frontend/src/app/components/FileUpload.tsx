@@ -140,7 +140,7 @@ export default function FileUploadModal({ onClose, onUploadSuccess }: FileUpload
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center" data-testid="file-upload-modal">
       <div className="relative max-w-md max-h-[calc(100vh-4rem)] p-6 bg-white shadow-lg rounded-lg overflow-y-auto">
         {isUploading && <LoadingSpinner />}
         <div className="flex justify-between items-center border-b pb-2">

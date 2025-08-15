@@ -5,6 +5,8 @@ import fs from 'fs';
 test.describe('File Upload Component', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    await page.getByRole('button', { name: 'アップロード' }).click();
+    await expect(page.locator('[data-testid="file-upload-modal"]')).toBeVisible();
   });
 
   test('CSVファイルをアップロードして成功メッセージが表示される', async ({ page }) => {
