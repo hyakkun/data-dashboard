@@ -21,7 +21,7 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/")
+@router.post("")
 async def upload_file(file: UploadFile, db: Session = Depends(get_db)):
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="Invalid file type. Only CSV files are allowed.")
@@ -73,7 +73,7 @@ async def upload_file(file: UploadFile, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error : {str(e)}")
     
-@router.get("/")
+@router.get("")
 def list_files(db: Session = Depends(get_db)):
     files = db.query(UploadedCSV).all()
     return [{"file_id": str(file.id),
