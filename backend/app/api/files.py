@@ -1,3 +1,4 @@
+import json
 import uuid
 import pandas as pd
 
@@ -47,6 +48,7 @@ async def upload_file(file: UploadFile, db: Session = Depends(get_db)):
                     filename=file.filename,
                     filesize=len(contents),
                     row_count=len(df),
+                    columns=json.dumps(df.columns.tolist())
                     )
         db.add(record)
         db.commit()
