@@ -71,6 +71,7 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
               <p>アップロード日時: {new Date(file.uploaded_at).toLocaleString()}</p>
               <p>ファイルサイズ: {file.filesize} bytes</p>
               <p>データ行数: {file.row_count}</p>
+              <p>カラム: {file.columns}</p>
             </div>
             <div className="place-content-center">
               <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
