@@ -21,19 +21,19 @@ def get_db():
         db.close()
 
 @router.get("/{file_id}")
-def get_summary(file_id: str, db: Session = Depends(get_db)):
+def get_summary(file_id: uuid.UUID, db: Session = Depends(get_db)):
     record = db.query(UploadedCSV).filter(UploadedCSV.id == file_id).first()
     if not record:
         raise HTTPException(status_code=404, detail="File not found.")
 
     try:
-        file_path = storage.get_file_path(file_id)
+        file_path = storage.get_file_path(str(file_id))
         df = pd.read_csv(file_path)
         
         if "time_generated" not in df.columns:
             raise HTTPException(status_code=400, detail="CSV must contain 'time_generated' column.")
 
-        df["time_generated"] = pd.to_datetime(df["time_generated"], unit="us", errors="coerce").tz_localize('utc').tz_convert('Asia/Tokyo')
+        df["time_generated"] = pd.to_datetime(df["time_generated"], unit="us", errors="coerce", utc=True).dt.tz_convert('Asia/Tokyo')
         df = df.dropna(subset=["time_generated"])
         df["date"] = df["time_generated"].dt.strftime("%Y-%m-%d")
         counts_by_date = (
