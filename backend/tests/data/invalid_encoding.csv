@@ -1,2 +1,3 @@
-名前,年齢,メール
-アリス,30,alice@example.com
+time_generated,source_ip__value,dest_ip__value,dest_port,app,rule_matched,action__value
+1754925304305014,213.165.70.241,70.128.60.208,443,ssh,外部通信遮断,deny
+1755405884305014,253.223.199.230,250.17.3.7,53,dns,Web許可,allow

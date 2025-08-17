@@ -16,7 +16,7 @@ router = APIRouter(prefix="/summary", tags=["summary"])
 storage = LocalStorageService()
 
 class SummarizeRequest(BaseModel):
-    group_by: Literal["action__value", "app", "rule_matched", "dest_port", "source_ip__value", "dest_ip__value"]
+    group_by: str
     time_unit: Literal["day", "hour", "10min", "5min", "1min"]
 
 def resample_time(df: pd.DataFrame, time_unit: str) -> pd.Series:
@@ -48,6 +48,9 @@ async def summarize_data(file_id: uuid.UUID, request: SummarizeRequest, db: Sess
         
         if "time_generated" not in df.columns:
             raise HTTPException(status_code=400, detail="CSV must contain 'time_generated' column.")
+        if request.group_by not in df.columns:
+            raise HTTPException(status_code=400, detail=f"CSV must contain '{request.group_by}' column.")
+
         df["time_generated"] = pd.to_datetime(df["time_generated"], unit="us", errors="coerce", utc=True).dt.tz_convert('Asia/Tokyo')
         df = df.dropna(subset=["time_generated"])
         df[request.group_by] = df[request.group_by].fillna("unknown")

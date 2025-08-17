@@ -43,6 +43,8 @@ async def upload_file(file: UploadFile, db: Session = Depends(get_db)):
         df = pd.read_csv(StringIO(decoded), header=0)
         if df.empty or df.columns.size == 0:
             raise HTTPException(status_code=400, detail="Missing header or no data in CSV.")
+        if "time_generated" not in df.columns:
+            raise HTTPException(status_code=400, detail="CSV must contain a 'time_generated' column.")
         
         record = UploadedCSV(
                     filename=file.filename,

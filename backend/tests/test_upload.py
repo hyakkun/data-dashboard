@@ -45,9 +45,9 @@ def test_large_file():
     # サイズ超過用CSVをメモリ上で生成
     large_csv = io.StringIO()
     writer = csv.writer(large_csv)
-    writer.writerow(["name", "age", "email"])
+    writer.writerow(["time_generated", "source_ip__value", "dest_ip__value", "dest_port", "app", "rule_matched", "action__value"])
     for _ in range(1_000_000):
-        writer.writerow(["John", "99", "john@example.com"])
+        writer.writerow(["1754925304305014", "213.165.70.241", "70.128.60.208", "443", "ssh", "deny-external", "deny"])
     large_csv.seek(0)
 
     # バイトストリームに変換
