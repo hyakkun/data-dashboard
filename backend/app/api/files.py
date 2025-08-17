@@ -92,7 +92,14 @@ def get_file(file_id: uuid.UUID, db: Session = Depends(get_db)):
     file_record = db.query(UploadedCSV).filter(UploadedCSV.id == file_id).first()
     if not file_record:
         raise HTTPException(status_code=404, detail="ファイルが見つかりません")
-    return file_record
+    return {
+        "file_id": str(file_record.id),
+        "filename": file_record.filename,
+        "filesize": file_record.filesize,
+        "row_count": file_record.row_count,
+        "uploaded_at": file_record.uploaded_at.isoformat() if file_record.uploaded_at else None,
+        "columns": json.loads(file_record.columns)
+    }
 
 @router.get("/{file_id}/download")
 def download_file(file_id: uuid.UUID, db: Session = Depends(get_db)):
