@@ -1,24 +1,51 @@
 "use client";
 
 import React from "react";
-import { use, useEffect } from "react";
+import { use, useState, useEffect, useCallback } from "react";
 import { FiDownload } from "react-icons/fi";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+  LineChart, Line, XAxis, YAxis, Legend, Tooltip, ResponsiveContainer
 } from "recharts";
 
 import { FileItem } from "@/app/components/FileList";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 
+type ApiResponse = {
+  status: string;
+  group_by: string;
+  time_unit: string;
+  categories: string[];
+  summary: Record<string, string | number>[];
+};
+
+const groupByOptions = [
+  { value: "action__value", label: "Action" },
+  { value: "app", label: "Application" },
+  { value: "rule_matched", label: "Rule" },
+  { value: "dest_port", label: "Destination Port" },
+  // { value: "source_ip__value", label: "Source IP" },
+  // { value: "dest_ip__value", label: "Destination IP" },
+];
+
+const timeUnitOptions = [
+  { value: "day", label: "日" },
+  { value: "hour", label: "時間" },
+  { value: "10min", label: "10分" },
+  { value: "5min", label: "5分" },
+  { value: "1min", label: "1分" },
+];
+
 export default function FileDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const unwrapParams = use(params);
   const id = unwrapParams.id;
-  const [file, setFile] = React.useState<FileItem | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [data, setData] = React.useState<{ date: string; count: number }[] | null>(null);
-  // TODO: APIで詳細データ取得して表示する実装へ
+  const [file, setFile] = useState<FileItem | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [groupBy, setGroupBy] = useState("app");
+  const [timeUnit, setTimeUnit] = useState("day");
+  const [data, setData] = useState<Record<string, string | number>[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);  // TODO: APIで詳細データ取得して表示する実装へ
 
-  const loadFileDetail = async (id: string) => {
+  const loadFileDetail = useCallback(async (id: string) => {
     setIsLoading(true);
     try {
       const res = await fetch(`/api/files/${id}`, {
@@ -31,22 +58,25 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const loadFileSummary = async (id: string) => {
+  const loadFileSummary = useCallback(async (id: string) => {
     setIsLoading(true);
     try {
       const res = await fetch(`/api/summary/${id}`, {
-        method: "GET",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ group_by: groupBy, time_unit: timeUnit }),
       });
-      const data = await res.json();
-      setData(data.summary || []);
+      const json: ApiResponse = await res.json();
+      setData(json.summary);
+      setCategories(json.categories);
     } catch (e) {
       console.error("ファイルのサマリー取得に失敗しました", e);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [groupBy, timeUnit]);
 
   useEffect(() => {
     if (typeof id === "string") {
@@ -56,7 +86,7 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
       setFile(null);
       setData([]);
     }
-  }, [id]);
+  }, [id, loadFileDetail, loadFileSummary]);
 
   return (
     <main className="justify-center flex flex-col items-center">
@@ -80,36 +110,67 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
               </button>
             </div>
           </div>
+          <div className="flex gap-4 items-center">
+            <label>
+              集計軸:{" "}
+              <select
+                value={groupBy}
+                onChange={(e) => setGroupBy(e.target.value)}
+                className="border p-1 rounded"
+              >
+                {groupByOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              時間粒度:{" "}
+              <select
+                value={timeUnit}
+                onChange={(e) => setTimeUnit(e.target.value)}
+                className="border p-1 rounded"
+              >
+                {timeUnitOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           {data && data.length > 0 ? (
-          <div className="flex justify-center m-4">
-            <div className="w-full h-96 p-4">
-              <h2 className="text-lg font-bold mb-4">日別ログ件数</h2>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
+            <div className="flex flex-col justify-center w-full h-96 p-4 mx-4 mt-4 mb-8">
+              <h2 className="text-lg font-bold mb-4">ログ件数推移</h2>
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart data={data} margin={{ top: 20, right: 20, bottom: 80, left: 20 }}>
+                  <XAxis dataKey="time_bucket" />
                   <YAxis />
                   <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#8884d8"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                  />
+                  <Legend />
+                  {categories.map((cat, idx) => (
+                    <Line
+                      key={cat}
+                      type="monotone"
+                      dataKey={cat}
+                      stroke={`hsl(${(idx * 60) % 360}, 70%, 50%)`} // 動的に色を割り当て
+                      dot={false}
+                    />
+                  ))}
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          </div>
           ) : (
-            <p className="text-center">日別ログ件数のデータがありません</p>
+            <p className="text-center">データがありません</p>
           )}
         </div>
       ) : (
         <p>ファイルが見つかりません</p>
       )}
-      <div className="justify-end flex mt-4">
-        <button className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+      <div className="flex justify-center mt-4">
+        <button className="flex justify-end bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
           onClick={() => window.location.href = "/"}>ファイル一覧に戻る</button>
       </div>
     </main>
