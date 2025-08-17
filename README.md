@@ -1,4 +1,4 @@
-# Log Analysis Dashboard
+# Log Analytics Dashboard
 
 [![Backend Tests](https://github.com/hyakkun/data-dashboard/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/hyakkun/data-dashboard/actions/workflows/backend-tests.yml)
 [![End 2 End Tests with Playwright](https://github.com/hyakkun/data-dashboard/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/hyakkun/data-dashboard/actions/workflows/e2e-tests.yml)
@@ -6,6 +6,8 @@
 
 ログファイルをアップロードし、カテゴリ別の件数推移をグラフで可視化するシステムです。
 フロントエンド（Next.js）、バックエンド（FastAPI）、データベース（PostgreSQL）を Docker Compose で構成しています。
+
+![アプリのデモ](demo.gif)
 
 ## 機能
 

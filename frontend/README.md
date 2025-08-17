@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend
 
-## Getting Started
+本ディレクトリは Next.js (App Router) を利用したフロントエンドです。  
+アップロード済みCSVファイルの一覧表示・詳細表示・可視化を行います。
 
-First, run the development server:
+## 必要要件
+
+- Node.js (推奨: v20 以上)
+- npm または yarn
+
+## セットアップ
+
+```bash
+# 依存パッケージをインストール
+npm install
+# または
+yarn install
+
+# 環境変数ファイルを作成（必要に応じて編集）
+cp .env.local.example .env.local
+```
+
+## 開発用サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで http://localhost:3000 を開くと動作確認できます。  
+バックエンド API (FastAPI) が必要なため、基本的には Docker Compose 全体を起動することを推奨します。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ビルド
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## ディレクトリ構成（抜粋）
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+frontend/
+  ├─ src/
+  │   └─app/            # Next.js App Router ページ群
+  │     ├─ api/         # APIルート
+  │     └─ components/  # UIコンポーネント
+  ├─ tests/             # PlaywrightによるE2Eテスト
+  └─ ...
+```
