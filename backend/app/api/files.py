@@ -1,23 +1,19 @@
+import json
 import uuid
-from fastapi import FastAPI, UploadFile, HTTPException, Depends
 import pandas as pd
 
+from fastapi import APIRouter, HTTPException, UploadFile, Depends
 from pandas.errors import ParserError
-from fastapi.exceptions import RequestValidationError
 from sqlalchemy.orm import Session
 
-from exceptions import http_exception_handler, validation_exception_handler
-from storage_services import LocalStorageService
-from database import SessionLocal
-from models import UploadedCSV
+from app.models import UploadedCSV
+from app.database import SessionLocal
+from app.storage_services import LocalStorageService
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 
-app = FastAPI()
+router = APIRouter(prefix="/files", tags=["files"])
 storage = LocalStorageService()
-
-app.add_exception_handler(HTTPException, http_exception_handler)
-app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
 def get_db():
     db = SessionLocal()
@@ -26,11 +22,7 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
-
-@app.post("/files")
+@router.post("")
 async def upload_file(file: UploadFile, db: Session = Depends(get_db)):
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="Invalid file type. Only CSV files are allowed.")
@@ -56,6 +48,7 @@ async def upload_file(file: UploadFile, db: Session = Depends(get_db)):
                     filename=file.filename,
                     filesize=len(contents),
                     row_count=len(df),
+                    columns=json.dumps(df.columns.tolist())
                     )
         db.add(record)
         db.commit()
@@ -82,7 +75,7 @@ async def upload_file(file: UploadFile, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Unexpected error : {str(e)}")
     
-@app.get("/files")
+@router.get("")
 def list_files(db: Session = Depends(get_db)):
     files = db.query(UploadedCSV).all()
     return [{"file_id": str(file.id),
@@ -92,14 +85,14 @@ def list_files(db: Session = Depends(get_db)):
              "uploaded_at": file.uploaded_at.isoformat() if file.uploaded_at else None}
              for file in files]
 
-@app.get("/files/{file_id}")
+@router.get("/{file_id}")
 def get_file(file_id: uuid.UUID, db: Session = Depends(get_db)):
     file_record = db.query(UploadedCSV).filter(UploadedCSV.id == file_id).first()
     if not file_record:
         raise HTTPException(status_code=404, detail="ファイルが見つかりません")
     return file_record
 
-@app.get("/files/{file_id}/download")
+@router.get("/{file_id}/download")
 def download_file(file_id: uuid.UUID, db: Session = Depends(get_db)):
     file_record = db.query(UploadedCSV).filter(UploadedCSV.id == file_id).first()
     if not file_record:
@@ -110,7 +103,7 @@ def download_file(file_id: uuid.UUID, db: Session = Depends(get_db)):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="ファイルが見つかりません")
 
-@app.delete("/files/{file_id}")
+@router.delete("/{file_id}")
 def delete_file(file_id: uuid.UUID, db: Session = Depends(get_db)):
     file_record = db.query(UploadedCSV).filter(UploadedCSV.id == file_id).first()
     if not file_record:

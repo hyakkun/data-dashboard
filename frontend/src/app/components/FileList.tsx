@@ -6,6 +6,7 @@ export interface FileItem {
   row_count: number;
   uploaded_at: string; // ISO文字列想定
   filesize: number; // バイト
+  columns: string[]; // カラム名の配列
 }
 
 interface FileListProps {
