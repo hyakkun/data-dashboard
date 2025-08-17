@@ -1,1 +1,1 @@
-Alice,30,alice@example.com
+time_generated,source_ip__value,dest_ip__value,dest_port,app,rule_matched,action__value

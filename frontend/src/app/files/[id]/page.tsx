@@ -18,15 +18,6 @@ type ApiResponse = {
   summary: Record<string, string | number>[];
 };
 
-const groupByOptions = [
-  { value: "action__value", label: "Action" },
-  { value: "app", label: "Application" },
-  { value: "rule_matched", label: "Rule" },
-  { value: "dest_port", label: "Destination Port" },
-  // { value: "source_ip__value", label: "Source IP" },
-  // { value: "dest_ip__value", label: "Destination IP" },
-];
-
 const timeUnitOptions = [
   { value: "day", label: "日" },
   { value: "hour", label: "時間" },
@@ -40,10 +31,10 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
   const id = unwrapParams.id;
   const [file, setFile] = useState<FileItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [groupBy, setGroupBy] = useState("app");
+  const [groupBy, setGroupBy] = useState("");
   const [timeUnit, setTimeUnit] = useState("day");
   const [data, setData] = useState<Record<string, string | number>[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);  // TODO: APIで詳細データ取得して表示する実装へ
+  const [categories, setCategories] = useState<string[]>([]);
 
   const loadFileDetail = useCallback(async (id: string) => {
     setIsLoading(true);
@@ -61,6 +52,7 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
   }, []);
 
   const loadFileSummary = useCallback(async (id: string) => {
+    if (!groupBy || !timeUnit) return;
     setIsLoading(true);
     try {
       const res = await fetch(`/api/summary/${id}`, {
@@ -81,12 +73,17 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
   useEffect(() => {
     if (typeof id === "string") {
       loadFileDetail(id);
-      loadFileSummary(id);
     } else {
       setFile(null);
       setData([]);
     }
-  }, [id, loadFileDetail, loadFileSummary]);
+  }, [id, loadFileDetail]);
+
+  useEffect(() => {
+    if (typeof id === "string") {
+      loadFileSummary(id);
+    }
+  }, [id, groupBy, timeUnit, loadFileSummary]);
 
   return (
     <main className="justify-center flex flex-col items-center">
@@ -101,7 +98,7 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
               <p>アップロード日時: {new Date(file.uploaded_at).toLocaleString()}</p>
               <p>ファイルサイズ: {file.filesize} bytes</p>
               <p>データ行数: {file.row_count}</p>
-              <p>カラム: {file.columns}</p>
+              <p>カラム: {file.columns.join(", ")}</p>
             </div>
             <div className="place-content-center">
               <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -118,9 +115,10 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
                 onChange={(e) => setGroupBy(e.target.value)}
                 className="border p-1 rounded"
               >
-                {groupByOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
+                <option value="">選択してください</option>
+                {file.columns.filter(n => n !== "time_generated" && !n.includes("_ip")).map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
                   </option>
                 ))}
               </select>
@@ -163,7 +161,7 @@ export default function FileDetailPage({ params }: { params: Promise<{ id: strin
               </ResponsiveContainer>
             </div>
           ) : (
-            <p className="text-center">データがありません</p>
+            <p className="text-center">集計対象を選択してください</p>
           )}
         </div>
       ) : (
