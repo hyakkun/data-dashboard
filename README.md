@@ -1,5 +1,9 @@
 # Log Analysis Dashboard
 
+[![Backend Tests](https://github.com/hyakkun/data-dashboard/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/hyakkun/data-dashboard/actions/workflows/backend-tests.yml)
+[![End 2 End Tests with Playwright](https://github.com/hyakkun/data-dashboard/actions/workflows/e2e-tests.yml/badge.svg)](https://github.com/hyakkun/data-dashboard/actions/workflows/e2e-tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](/LICENSE)
+
 ログファイルをアップロードし、カテゴリ別の件数推移をグラフで可視化するシステムです。
 フロントエンド（Next.js）、バックエンド（FastAPI）、データベース（PostgreSQL）を Docker Compose で構成しています。
 
@@ -31,7 +35,3 @@ docker compose up -d --build
 ```
 
 アクセス： http://localhost:3000
-
-## ライセンス
-
-MIT License
