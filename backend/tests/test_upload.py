@@ -41,6 +41,12 @@ def test_invalid_encoding():
         response = client.post("/files", files={"file": (file_path.name, f, "text/csv")})
     assert response.status_code == 400
 
+def test_without_time_generated():
+    file_path = DATA_DIR / "without_time_generated.csv"
+    with file_path.open("rb") as f:
+        response = client.post("/files", files={"file": (file_path.name, f, "text/csv")})
+    assert response.status_code == 400
+
 def test_large_file():
     # サイズ超過用CSVをメモリ上で生成
     large_csv = io.StringIO()
