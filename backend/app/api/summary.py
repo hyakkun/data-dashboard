@@ -21,11 +21,11 @@ class SummarizeRequest(BaseModel):
 
 def resample_time(df: pd.DataFrame, time_unit: str) -> pd.Series:
     if time_unit == "day":
-        return df["datetime"].dt.strftime("%Y-%m-%d")
+        return df["time_generated"].dt.strftime("%Y-%m-%d")
     elif time_unit == "hour":
-        return df["datetime"].dt.strftime("%Y-%m-%d %H:00")
+        return df["time_generated"].dt.strftime("%Y-%m-%d %H:00")
     elif time_unit in ["10min", "5min", "1min"]:
-        return df["datetime"].dt.floor(time_unit).dt.strftime("%Y-%m-%d %H:%M")
+        return df["time_generated"].dt.floor(time_unit).dt.strftime("%Y-%m-%d %H:%M")
     else:
         raise ValueError(f"Unsupported time_unit: {time_unit}")
 
