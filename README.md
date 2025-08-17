@@ -7,7 +7,8 @@
 ログファイルをアップロードし、カテゴリ別の件数推移をグラフで可視化するシステムです。
 フロントエンド（Next.js）、バックエンド（FastAPI）、データベース（PostgreSQL）を Docker Compose で構成しています。
 
-![アプリのデモ](demo.gif)
+![アプリのデモ](demo.gif)  
+▶️[動画版デモ](https://github.com/hyakkun/data-dashboard/releases/download/v1.0.0/demo.mp4)
 
 ## 機能
 
